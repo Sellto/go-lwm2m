@@ -23,8 +23,21 @@ func Register(t taskArg) {
   }
 }
 
-func Update(l *net.UDPConn) {
-  log.Println("Update Task")
+func Update(t taskArg) {
+  log.Println("Update")
+  msg := coap.Message {
+    Type:      coap.Acknowledgement,
+    Code:      coap.Changed,
+    MessageID: t.Msg.MessageID,
+    Token:     t.Msg.Token,
+  }
+
+  msg.SetOption(coap.ContentFormat, coap.TextPlain)
+  msg.SetOption(coap.LocationPath, "rd/test01")
+  err := coap.Transmit(t.Conn, t.From, msg)
+  if err != nil {
+    log.Printf("Error")
+  }
 }
 
 func Read(l *net.UDPConn) {

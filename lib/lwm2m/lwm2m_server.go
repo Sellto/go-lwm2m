@@ -2,7 +2,7 @@ package lwm2m
 
 import (
   //"log"
-  "fmt"
+  //"fmt"
   "time"
   "net"
   "github.com/foize/go.fifo"
@@ -32,8 +32,11 @@ var buf = make([]byte, maxPktLen)
 func Listen(t taskArg){
   msg,addr,_ := coap.Receive(t.Conn,buf,ResponseTimeout)
   if msg.Option(11) == "rd" {
-    fmt.Println(addr)
-    task.Add(Task{toDo:Register, Arg:taskArg{Conn: t.Conn,From: addr,Msg:msg}})
+    if len(msg.Options(11)) == 1 {
+      task.Add(Task{toDo:Register, Arg:taskArg{Conn: t.Conn,From: addr,Msg:msg}})
+    } else {
+      task.Add(Task{toDo:Update, Arg:taskArg{Conn: t.Conn,From: addr,Msg:msg}})
+    }
   }
 }
 
