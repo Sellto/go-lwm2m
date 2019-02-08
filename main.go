@@ -26,7 +26,7 @@ const (
 )
 
 func initialize() (*net.UDPConn,error) {
-	flag.StringVar(&opts.LWM2MHost, "a", "[bbbb::101]", "LwM2M host.")
+	flag.StringVar(&opts.LWM2MHost, "a", "localhost", "LwM2M host.")
 	flag.StringVar(&opts.LWM2MPort, "p", "5683", "LwM2M port.")
 	flag.BoolVar(&opts.Help, "h", false, "Show help.")
 	flag.BoolVar(&opts.Help, "help", false, "Show help.")
@@ -35,9 +35,9 @@ func initialize() (*net.UDPConn,error) {
 		fmt.Printf("%s\n",help)
 		os.Exit(0)
 	}
-	//addr := fmt.Sprintf("%s:%s", opts.LWM2MHost, opts.LWM2MPort)
-	uaddr, err := net.ResolveUDPAddr("udp6", "[bbbb::101]:5683")
-	l, err := net.ListenUDP("udp6", uaddr)
+	addr := fmt.Sprintf("%s:%s", opts.LWM2MHost, opts.LWM2MPort)
+	uaddr, err := net.ResolveUDPAddr("udp",addr)
+	l, err := net.ListenUDP("udp", uaddr)
 	return l,err
 }
 

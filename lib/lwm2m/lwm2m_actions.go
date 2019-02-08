@@ -6,8 +6,21 @@ import (
   "../coap"
 )
 
+
+func Listen(t taskArg){
+  msg,addr,_ := coap.Receive(t.Conn,buf,ResponseTimeout)
+  if msg.Option(11) == "rd" {
+    if len(msg.Options(11)) == 1 {
+      task.Add(Task{toDo:Register,Conn: t.Conn,From: addr,Msg:msg})
+    } else {
+      task.Add(Task{toDo:Update,Conn: t.Conn,From: addr, Msg:msg})
+    }
+  }
+}
+
 func Register(t taskArg) {
   log.Println("Register Task")
+  log.Println(string(t.Msg.Payload))
   msg := coap.Message {
     Type:      coap.Acknowledgement,
     Code:      coap.Created,
