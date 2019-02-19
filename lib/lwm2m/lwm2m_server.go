@@ -15,6 +15,7 @@ const(
 
 var task = NewQueue()
 var buf = make([]byte, maxPktLen)
+var	db = make(map[string]Client)
 
 func Start(l *net.UDPConn) {
   for true {
