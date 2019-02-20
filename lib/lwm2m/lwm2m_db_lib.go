@@ -2,22 +2,37 @@ package lwm2m
 
 import (
   "strings"
+    "../coap"
 )
 
-func registerParser(msg []byte) Client {
+func uriPathParser(msg []byte) map[string]map[string][]Ressource {
   data := make(map[string]map[string][]Ressource)
   items := strings.Split(string(msg),",")
-  for id,item := range items {
-    if id > 0 {
-      object := strings.Split(item[2:len(item)-1],"/")
+  var splitpointer = 0
+  for _,item := range items {
+      if string(item[1]) == "/" {
+        splitpointer = 2
+      } else {
+        splitpointer = 1
+      }
+      object := strings.Split(item[splitpointer:len(item)-1],"/")
       objID := object[0]
       sub := object[1]
-      res := object[2]
       if data[objID] == nil {
         data[objID]= make(map[string][]Ressource)
       }
-      data[objID][sub] = append(data[objID][sub],Ressource{ID:res,PollingDelay:30})
-    }
+      if len(object) > 2 {
+        res := object[2]
+        data[objID][sub] = append(data[objID][sub],Ressource{ID:res,PollingDelay:30})
+      } else {
+          data[objID][sub] = []Ressource{}
+      }
   }
-  return Client{Data:data}
+  return data
+}
+
+
+func checkResponse(m coap.Message)bool{
+
+return true
 }
